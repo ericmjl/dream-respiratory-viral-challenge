@@ -1,13 +1,6 @@
 """
 DREAM Respiratory Virus Challenge 2016
 
-Team: Germany
-Members:
-- Damien
-- Eric
-- Christoph
-- Guy
-
 Script Author: Eric J. Ma
 Script Contributors and Dates:
 Date: 26 July 2016
@@ -43,12 +36,14 @@ for grp, dat in clinical_df.groupby('STUDYID'):
         clinical_split[grp] = dat.join(expression_df).reset_index().sort_values(['STUDYID', 'SUBJECTID', 'SHEDDING_SC1',
                                                                                  'SYMPTOMATIC_SC2', 'LOGSYMPTSCORE_SC3',
                                                                                  'AGE', 'GENDER', 'EARLYTX', 'SHAM', 'TIMEHOURS'])
+        # Remove unnecessary columns.
         del clinical_split[grp]['SAMPLEID']
         del clinical_split[grp]['CEL']
 
+        # Reshape the data such that each row is a single patient.
         clinical_split[grp] = clinical_split[grp].set_index(['STUDYID', 'SUBJECTID', 'SHEDDING_SC1',
                                                              'SYMPTOMATIC_SC2', 'LOGSYMPTSCORE_SC3',
                                                              'AGE', 'GENDER', 'EARLYTX', 'SHAM', 'TIMEHOURS'])
         clinical_split[grp] = clinical_split[grp].unstack()
         clinical_split[grp].columns = clinical_split[grp].columns.to_series().apply(pd.Series).astype(str).T.apply('_'.join)
-        clinical_split[grp].to_csv('{0}.csv'.format(grp))
+        clinical_split[grp].to_csv('../data/{0}.csv'.format(grp))
